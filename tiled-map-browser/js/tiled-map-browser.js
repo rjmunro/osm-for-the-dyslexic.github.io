@@ -99,8 +99,8 @@
         mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(mc.get('pan'));
         mc.add(new Hammer.Tap());
         mc.on("panleft panright panup pandown", onPan);
-        mc.on("pinchin", zoomIn);
-        mc.on("pinchout", zoomOut);
+        mc.on("pinchin", zoomOut);
+        mc.on("pinchout", zoomIn);
         
         if (mapCanvas.addEventListener) {
             // IE9, Chrome, Safari, Opera
