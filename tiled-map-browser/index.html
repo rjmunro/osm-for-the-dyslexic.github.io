@@ -1,1 +1,18 @@
-test
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+        <link rel="stylesheet" href="./css/reset.css">
+        <link rel="stylesheet" href="./css/main.css">
+        <title>Gestures test v 0.0.3</title>
+    </head>    
+    <body>
+        <script src="./js/touch-emulator.js"></script>
+        <script> TouchEmulator(); </script>
+        <script src="./js/hammer.js"></script>
+        <script src="./js/tiled-map-browser.js"></script>
+        <div id="map"></div>
+        <!-- <canvas id="map" width="1000" height="1000" >Your browser does not support the HTML5 canvas tag.</canvas> -->
+        <script> TiledMapBrowser("map"); </script>
+    </body>
+</html>
