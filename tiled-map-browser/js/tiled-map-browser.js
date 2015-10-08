@@ -28,6 +28,7 @@
         var context = mapCanvas.getContext("2d");
         context.canvas.width  = "" + (viewport().width) + "";
         context.canvas.height = "" + (viewport().height) + "";
+        printMessageOnCanvas("Function: "+"resizeMapCanvasToFullScreen" + "\n" + Date());
     }
     
     function eraseMapCanvas(){
