@@ -49,14 +49,20 @@
         eraseMapCanvas();
         printMessageOnCanvas("Function: "+"onPan(" + ev.type + ")\n" + "velocityX: " +ev.velocityX.toFixed(3) + " velocityY: " + ev.velocityY.toFixed(3) + "\n" + Date());
         // deltaX, deltaY
-        console.log("onPan: " + ev.type);
+        //console.log("onPan: " + ev.type);
     }
 
     function onZoom(value){
         eraseMapCanvas();
         printMessageOnCanvas("Function: "+"onZoom(" + value +")\n" + Date());    
-        console.log("onZoom: " + value);
+        //console.log("onZoom: " + value);
     }
+    
+    function onPress(ev){
+        eraseMapCanvas();
+        printMessageOnCanvas("Function: "+"onPress(" + ev.type+")\n"+"clientX: " + ev.pointers[0].clientX + " clientY: " + ev.pointers[0].clientY + "\n" + Date());
+    }
+    
     function zoomOut(){
         onZoom(-1);
     }
@@ -98,10 +104,11 @@
         });
         mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
         mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(mc.get('pan'));
-        mc.add(new Hammer.Tap());
+        mc.add(new Hammer.Press({ threshold: 10 })).recognizeWith(mc.get('pan'));
         mc.on("panleft panright panup pandown", onPan);
         mc.on("pinchin", zoomOut);
         mc.on("pinchout", zoomIn);
+        mc.on("press", onPress);
         
         if (mapCanvas.addEventListener) {
             // IE9, Chrome, Safari, Opera
