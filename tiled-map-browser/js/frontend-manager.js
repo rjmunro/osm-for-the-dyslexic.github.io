@@ -90,6 +90,7 @@
         resizeAllCanvasToFullScreen();
         window.addEventListener("resize", resizeAllCanvasToFullScreen);
         GestureManager(mapCanvas,onPan,onZoom,onIdentify);
+        //MapManager(mapCanvas)
         return;
     }
     
