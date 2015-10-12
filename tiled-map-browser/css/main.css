@@ -1,3 +1,16 @@
 * {/*cursor:none;*/}
 body{overflow:hidden;}
 #map{zIndex:3;}
+#map-canvas{
+    position: absolute; 
+    -webkit-backface-visibility: hidden;
+}
+#id-canvas{
+    position: absolute; 
+    -webkit-backface-visibility: hidden;
+}
+#buttons-div{
+    position: absolute; 
+    -webkit-backface-visibility: hidden;
+    background:#FF0000;
+}

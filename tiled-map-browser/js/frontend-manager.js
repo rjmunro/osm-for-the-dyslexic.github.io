@@ -3,6 +3,7 @@
     
     var mapCanvas = null;
     var idCanvas = null;
+    var buttonsDiv = null;
     
     function onPan(deltaX,deltaY){
         eraseMapCanvas();
@@ -38,28 +39,63 @@
     function createChilds(mainElementId){
         var mainElement = document.getElementById(mainElementId);
         mapCanvas = document.createElement("canvas");
+        mapCanvas.id = "map-canvas";
         idCanvas = document.createElement("canvas");
-        mainElement.appendChild(mapCanvas);
+        idCanvas.id = "id-canvas";
+        buttonsDiv = document.createElement("div");
+        buttonsDiv.id = "buttons-div";
+        mainElement.appendChild(buttonsDiv);
         mainElement.appendChild(idCanvas);
+        mainElement.appendChild(mapCanvas);
     }
     
     /**
      * Resize Map and id canvas to full screen
      */
-    function resizeAllCanvasToFullScreen(){
+    function arrangeGui(){
         // split in support method with param
-        mapCanvas.style.width = "" + (viewport().width) + "px";
-        mapCanvas.style.height = "" + (viewport().height) + "px";
+        var buttonsDimension = 40;
+        var viewportWidth = viewport().width;
+        var viewportHeight = viewport().height;
+        
+        var mapWidth = viewportWidth;
+        var mapHeight = viewportHeight;
+        var buttonWidth = viewportWidth;
+        var buttonHeight = viewportHeight;
+        var buttonTop = 0;
+        var buttonLeft = 0;
+        
+        
+        if (viewportWidth > viewportHeight){
+            // buttons on right
+            mapWidth -= buttonsDimension;
+            buttonWidth = buttonsDimension;
+            buttonLeft = mapWidth;
+            
+        } else {
+            // buttons on bottom
+            mapHeight -= buttonsDimension;
+            buttonHeight = buttonsDimension;
+            buttonTop = mapHeight;
+        }
+        
+        mapCanvas.style.width = "" + mapWidth + "px";
+        mapCanvas.style.height = "" + mapHeight + "px";
         var context = mapCanvas.getContext("2d");
-        context.canvas.width  = "" + (viewport().width) + "";
-        context.canvas.height = "" + (viewport().height) + "";
-        idCanvas.style.width = "" + (viewport().width) + "px";
-        idCanvas.style.height = "" + (viewport().height) + "px";
+        context.canvas.width  = "" + mapWidth + "";
+        context.canvas.height = "" + mapHeight + "";
+        idCanvas.style.width = "" + mapWidth + "px";
+        idCanvas.style.height = "" + mapHeight + "px";
         var context2 = idCanvas.getContext("2d");
-        context2.canvas.width  = "" + (viewport().width) + "";
-        context2.canvas.height = "" + (viewport().height) + "";
+        context2.canvas.width  = "" + mapWidth + "";
+        context2.canvas.height = "" + mapHeight + "";
         eraseMapCanvas();
-        printMessageOnMapCanvas("Function: "+"resizeAllCanvasToFullScreen" + "\n" + Date());
+        buttonsDiv.style.height = "" + buttonHeight + "px";
+        buttonsDiv.style.width = "" + buttonWidth + "px";
+        buttonsDiv.style.top = "" + buttonTop + "px";
+        buttonsDiv.style.left = "" + buttonLeft + "px";
+        
+        printMessageOnMapCanvas("Function: "+"arrangeGui" + "\n" + Date());
     }
     
     /**
@@ -87,8 +123,8 @@
      */
     function FrontendManager(mainElementId) {
         createChilds(mainElementId);
-        resizeAllCanvasToFullScreen();
-        window.addEventListener("resize", resizeAllCanvasToFullScreen);
+        arrangeGui();
+        window.addEventListener("resize", arrangeGui);
         GestureManager(mapCanvas,onPan,onZoom,onIdentify);
         //MapManager(mapCanvas)
         return;
