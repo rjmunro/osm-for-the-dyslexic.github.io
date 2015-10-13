@@ -4,19 +4,24 @@
     var mapCanvas = null;
     var idCanvas = null;
     var buttonsDiv = null;
+    var buttonGoBack = null;
+    var buttonMenu = null;
+    var buttonHelp = null;
+    var buttonVoice = null;
+    
     
     function onPan(deltaX,deltaY){
-        eraseMapCanvas();
+        redrawMapCanvas();
         printMessageOnMapCanvas("Function: "+"onPan(" + deltaX + "," + deltaY + ")\n" + Date());
     }
     
     function onZoom(deltaZ){
-        eraseMapCanvas();
+        redrawMapCanvas();
         printMessageOnMapCanvas("Function: "+"onZoom(" + deltaZ +")\n" + Date());    
     }
     
     function onIdentify(canvasPosX,canvasPosY){
-        eraseMapCanvas();
+        redrawMapCanvas();
         printMessageOnMapCanvas("Function: "+"onIdentify(" + canvasPosX + "," + canvasPosY + ")\n" + Date());
     }
     
@@ -44,7 +49,25 @@
         idCanvas.id = "id-canvas";
         buttonsDiv = document.createElement("div");
         buttonsDiv.id = "buttons-div";
+        
+        buttonGoBack = document.createElement("div");
+        buttonGoBack.id = "button-go-back";
+
+        buttonMenu = document.createElement("div");
+        buttonMenu.id = "button-menu";
+
+        buttonHelp = document.createElement("div");
+        buttonHelp.id = "button-help";
+
+        buttonVoice = document.createElement("div");
+        buttonVoice.id = "button-voice";
+        
+        buttonsDiv.appendChild(buttonGoBack);
+        buttonsDiv.appendChild(buttonMenu);
+        buttonsDiv.appendChild(buttonHelp);
+        buttonsDiv.appendChild(buttonVoice);
         mainElement.appendChild(buttonsDiv);
+        
         mainElement.appendChild(idCanvas);
         mainElement.appendChild(mapCanvas);
     }
@@ -53,10 +76,9 @@
      * Resize Map and id canvas to full screen
      */
     function arrangeGui(){
-        // split in support method with param
-        var buttonsDimension = 40;
-        var viewportWidth = viewport().width;
-        var viewportHeight = viewport().height;
+        var buttonsDimension = 80; // todo: make dynamic
+        var viewportWidth = parseInt(""+viewport().width,10);
+        var viewportHeight = parseInt(""+viewport().height,10);
         
         var mapWidth = viewportWidth;
         var mapHeight = viewportHeight;
@@ -64,19 +86,23 @@
         var buttonHeight = viewportHeight;
         var buttonTop = 0;
         var buttonLeft = 0;
-        
+        var availableSpace = 0;
+        var gapsSpace = 0;
+        var minGapSpace = 0;
         
         if (viewportWidth > viewportHeight){
             // buttons on right
             mapWidth -= buttonsDimension;
             buttonWidth = buttonsDimension;
             buttonLeft = mapWidth;
+            availableSpace = viewportHeight;
             
         } else {
             // buttons on bottom
             mapHeight -= buttonsDimension;
             buttonHeight = buttonsDimension;
             buttonTop = mapHeight;
+            availableSpace = viewportWidth;
         }
         
         mapCanvas.style.width = "" + mapWidth + "px";
@@ -89,11 +115,45 @@
         var context2 = idCanvas.getContext("2d");
         context2.canvas.width  = "" + mapWidth + "";
         context2.canvas.height = "" + mapHeight + "";
-        eraseMapCanvas();
+        redrawMapCanvas();
         buttonsDiv.style.height = "" + buttonHeight + "px";
         buttonsDiv.style.width = "" + buttonWidth + "px";
         buttonsDiv.style.top = "" + buttonTop + "px";
         buttonsDiv.style.left = "" + buttonLeft + "px";
+        
+        buttonGoBack.style.height = "" + (buttonsDimension) + "px";
+        buttonGoBack.style.width = "" + (buttonsDimension) + "px";
+        buttonMenu.style.height = "" + (buttonsDimension) + "px";
+        buttonMenu.style.width = "" + (buttonsDimension) + "px";
+        buttonHelp.style.height = "" + (buttonsDimension) + "px";
+        buttonHelp.style.width = "" + (buttonsDimension) + "px";
+        buttonVoice.style.height = "" + (buttonsDimension) + "px";
+        buttonVoice.style.width = "" + (buttonsDimension) + "px";
+        
+        gapsSpace = availableSpace - (4 * buttonsDimension);
+        minGapSpace = Math.floor(gapsSpace/4.0);
+        
+        switch(gapsSpace%5) {
+            case 0:
+                // all gaps same dimension
+            break;
+            case 1:
+                // central gap + 1
+            break;
+            case 2:
+                // first and last gap + 1
+            break;
+            case 3:
+                // first last and central gap + 1
+            break;
+            case 4:
+                // first, second forth fifth gap +1
+                //code block
+            break;
+            default:
+                // should never happen, all gaps same dimension
+        }        
+        
         
         printMessageOnMapCanvas("Function: "+"arrangeGui" + "\n" + Date());
     }
@@ -101,7 +161,7 @@
     /**
      * Support method to completly erase the map canvas
      */
-    function eraseMapCanvas(){
+    function redrawMapCanvas(){
         var context = mapCanvas.getContext("2d");
         context.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
     }

@@ -14,3 +14,32 @@ body{overflow:hidden;}
     -webkit-backface-visibility: hidden;
     background:#FF0000;
 }
+
+#button-go-back{
+    position: absolute; 
+    background:#00FF00;
+}
+
+#button-menu{
+    position: absolute; 
+    background:#00FF00;
+}
+
+#button-help{
+    position: absolute; 
+    background:#00FF00;
+}
+
+#button-voice{
+    position: absolute; 
+    background:#00FF00;
+}
+
+
+pre {
+    outline: 2px dashed black;
+    padding: 1em;
+    background-image: url(http://upload.wikimedia.org/wikipedia/commons/8/84/Konqi_svg.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
