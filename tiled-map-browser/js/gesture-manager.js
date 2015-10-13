@@ -5,6 +5,7 @@
     var onZoomFunction = null;
     var onIdentifyFunction = null;
     var onPanFunction = null;
+    var onButton = null;
     var deltaX = 0;
     var deltaY = 0;
     
@@ -44,15 +45,20 @@
         return false;
     }
     
+    function onPressButton(ev){
+        onButton(ev.target.id);
+    }
+    
     /**
      * GestureManager initializer
      * @param map canvas id
      */
-    function GestureManager(_mapCanvas,_onPan,_onZoom,_onIdentify) {
+    function GestureManager(_mapCanvas,_onPan,_onZoom,_onIdentify,_buttons,_onButton) {
         mapCanvas = _mapCanvas;
         onPanFunction = _onPan;
         onZoomFunction = _onZoom;
         onIdentifyFunction = _onIdentify;
+        onButton = _onButton;
         
         var mc = new Hammer.Manager(mapCanvas,{
             transform_always_block: true,
@@ -78,6 +84,20 @@
             // IE 6/7/8
             mapCanvas.attachEvent("onmousewheel", mouseWheelHandler);
         }
+        
+        for (var i = 0; i<_buttons.length ; i++){
+            var mcButtons = new Hammer.Manager(_buttons[i],{
+                transform_always_block: true,
+                transform_min_scale: 1,
+                drag_block_horizontal: true,
+                drag_block_vertical: true,
+                drag_min_distance: 0        
+            //mcButtons.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));        
+            });
+            mcButtons.add(new Hammer.Press({ threshold: 10 }));
+            mcButtons.on("press", onPressButton);
+        }
+        
         return;
     }
     

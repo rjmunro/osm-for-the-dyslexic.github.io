@@ -25,6 +25,11 @@
         printMessageOnMapCanvas("Function: "+"onIdentify(" + canvasPosX + "," + canvasPosY + ")\n" + Date());
     }
     
+    function onButton(buttonId){
+        redrawMapCanvas();
+        printMessageOnMapCanvas("Function onButton(" + buttonId + ")\n" + Date());
+    }
+    
     /**
      * viewport height and width
      * support method
@@ -354,7 +359,7 @@
         createChilds(mainElementId);
         arrangeGui();
         window.addEventListener("resize", arrangeGui);
-        GestureManager(mapCanvas,onPan,onZoom,onIdentify);
+        GestureManager(mapCanvas,onPan,onZoom,onIdentify,[buttonGoBack,buttonMenu,buttonHelp,buttonVoice],onButton);
         //MapManager(mapCanvas)
         return;
     }
