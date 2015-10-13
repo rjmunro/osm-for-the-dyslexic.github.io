@@ -12,34 +12,36 @@ body{overflow:hidden;}
 #buttons-div{
     position: absolute; 
     -webkit-backface-visibility: hidden;
-    background:#FF0000;
+    background:#333333;
 }
 
 #button-go-back{
     position: absolute; 
-    background:#00FF00;
+    background-image: url(High-contrast-go-previous.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #button-menu{
     position: absolute; 
-    background:#00FF00;
+    background-image: url(High-contrast-applications-system.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #button-help{
     position: absolute; 
-    background:#00FF00;
+    background-image: url(High-contrast-help-browser.svg);
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #button-voice{
     position: absolute; 
-    background:#00FF00;
-}
-
-
-pre {
-    outline: 2px dashed black;
-    padding: 1em;
-    background-image: url(http://upload.wikimedia.org/wikipedia/commons/8/84/Konqi_svg.svg);
+    background-image: url(High-contrast-audio-volume-high.svg);
+    /*background-image: url(High-contrast-audio-volume-muted.svg);*/
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+

@@ -91,6 +91,8 @@
         var minGapSpace = 0;
         
         if (viewportWidth > viewportHeight){
+            buttonsDimension = Math.floor(viewportHeight/4.0);
+            if ( buttonsDimension > 150 ) {buttonsDimension = 130;}
             // buttons on right
             mapWidth -= buttonsDimension;
             buttonWidth = buttonsDimension;
@@ -98,6 +100,8 @@
             availableSpace = viewportHeight;
             
         } else {
+            buttonsDimension = Math.floor(viewportWidth/4.0);
+            if ( buttonsDimension > 150 ) {buttonsDimension = 130;}
             // buttons on bottom
             mapHeight -= buttonsDimension;
             buttonHeight = buttonsDimension;
@@ -131,30 +135,195 @@
         buttonVoice.style.width = "" + (buttonsDimension) + "px";
         
         gapsSpace = availableSpace - (4 * buttonsDimension);
-        minGapSpace = Math.floor(gapsSpace/4.0);
+        minGapSpace = Math.floor(gapsSpace/5.0);
         
-        switch(gapsSpace%5) {
+        //alert ("gapsSpace:" + gapsSpace + ", minGapSpace:" + minGapSpace*5);
+        
+        switch(gapsSpace - minGapSpace*5) {
             case 0:
+                // ----------------------------
                 // all gaps same dimension
+                // ----------------------------
+                // minGapSpace
+                // button 1
+                // minGapSpace
+                // button 2
+                // minGapSpace
+                // button 3
+                // minGapSpace
+                // button 4
+                // minGapSpace
+                //alert("0");
+                if (viewportWidth > viewportHeight){
+                    // buttons on right
+                    buttonGoBack.style.top = "" + (minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonGoBack.style.left = "" + (0) + "px";
+                    buttonMenu.style.top = "" + (minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonMenu.style.left = "" + (0) + "px";
+                    buttonHelp.style.top = "" + (minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonHelp.style.left = "" + (0) + "px";
+                    buttonVoice.style.top = "" + (minGapSpace*4+buttonsDimension*3) + "px";
+                    buttonVoice.style.left = "" + (0) + "px";
+                } else {
+                    // buttons on bottom
+                    buttonGoBack.style.top = "" + (0) + "px";
+                    buttonGoBack.style.left = "" + (minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonMenu.style.top = "" + (0) + "px";
+                    buttonMenu.style.left = "" + (minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonHelp.style.top = "" + (0) + "px";
+                    buttonHelp.style.left = "" + (minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonVoice.style.top = "" + (0) + "px";
+                    buttonVoice.style.left = "" + (minGapSpace*4+buttonsDimension*3) + "px";
+                }                
             break;
             case 1:
-                // central gap + 1
+                // ----------------------------
+                // all gaps same dimension
+                // ----------------------------
+                // minGapSpace
+                // button 1
+                // minGapSpace
+                // button 2
+                // minGapSpace + 1
+                // button 3
+                // minGapSpace
+                // button 4
+                // minGapSpace
+                //alert("1");
+                if (viewportWidth > viewportHeight){
+                    // buttons on right
+                    buttonGoBack.style.top = "" + (minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonGoBack.style.left = "" + (0) + "px";
+                    buttonMenu.style.top = "" + (minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonMenu.style.left = "" + (0) + "px";
+                    buttonHelp.style.top = "" + (1+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonHelp.style.left = "" + (0) + "px";
+                    buttonVoice.style.top = "" + (1+minGapSpace*4+buttonsDimension*3) + "px";
+                    buttonVoice.style.left = "" + (0) + "px";
+                } else {
+                    // buttons on bottom
+                    buttonGoBack.style.top = "" + (0) + "px";
+                    buttonGoBack.style.left = "" + (minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonMenu.style.top = "" + (0) + "px";
+                    buttonMenu.style.left = "" + (minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonHelp.style.top = "" + (0) + "px";
+                    buttonHelp.style.left = "" + (1+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonVoice.style.top = "" + (0) + "px";
+                    buttonVoice.style.left = "" + (1+minGapSpace*4+buttonsDimension*3) + "px";
+                }                
             break;
             case 2:
+                // ----------------------------
                 // first and last gap + 1
+                // ----------------------------
+                // minGapSpace + 1
+                // button 1
+                // minGapSpace
+                // button 2
+                // minGapSpace
+                // button 3
+                // minGapSpace
+                // button 4
+                // minGapSpace + 1
+                //alert("2");
+                if (viewportWidth > viewportHeight){
+                    // buttons on right
+                    buttonGoBack.style.top = "" + (1+minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonGoBack.style.left = "" + (0) + "px";
+                    buttonMenu.style.top = "" + (1+minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonMenu.style.left = "" + (0) + "px";
+                    buttonHelp.style.top = "" + (1+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonHelp.style.left = "" + (0) + "px";
+                    buttonVoice.style.top = "" + (1+minGapSpace*4+buttonsDimension*3) + "px";
+                    buttonVoice.style.left = "" + (0) + "px";
+                } else {
+                    // buttons on bottom
+                    buttonGoBack.style.top = "" + (0) + "px";
+                    buttonGoBack.style.left = "" + (1+minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonMenu.style.top = "" + (0) + "px";
+                    buttonMenu.style.left = "" + (1+minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonHelp.style.top = "" + (0) + "px";
+                    buttonHelp.style.left = "" + (1+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonVoice.style.top = "" + (0) + "px";
+                    buttonVoice.style.left = "" + (1+minGapSpace*4+buttonsDimension*3) + "px";
+                }                
             break;
             case 3:
+                // ----------------------------
                 // first last and central gap + 1
+                // ----------------------------
+                // minGapSpace + 1
+                // button 1
+                // minGapSpace
+                // button 2
+                // minGapSpace + 1
+                // button 3
+                // minGapSpace
+                // button 4
+                // minGapSpace + 1
+                //alert("3");
+                if (viewportWidth > viewportHeight){
+                    // buttons on right
+                    buttonGoBack.style.top = "" + (1+minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonGoBack.style.left = "" + (0) + "px";
+                    buttonMenu.style.top = "" + (1+minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonMenu.style.left = "" + (0) + "px";
+                    buttonHelp.style.top = "" + (2+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonHelp.style.left = "" + (0) + "px";
+                    buttonVoice.style.top = "" + (2+minGapSpace*4+buttonsDimension*3) + "px";
+                    buttonVoice.style.left = "" + (0) + "px";
+                } else {
+                    // buttons on bottom
+                    buttonGoBack.style.top = "" + (0) + "px";
+                    buttonGoBack.style.left = "" + (1+minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonMenu.style.top = "" + (0) + "px";
+                    buttonMenu.style.left = "" + (1+minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonHelp.style.top = "" + (0) + "px";
+                    buttonHelp.style.left = "" + (2+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonVoice.style.top = "" + (0) + "px";
+                    buttonVoice.style.left = "" + (2+minGapSpace*4+buttonsDimension*3) + "px";
+                }                
             break;
             case 4:
+                // ----------------------------
                 // first, second forth fifth gap +1
-                //code block
+                // ----------------------------
+                // minGapSpace + 1
+                // button 1
+                // minGapSpace + 1
+                // button 2
+                // minGapSpace
+                // button 3
+                // minGapSpace + 1
+                // button 4
+                // minGapSpace + 1
+                //alert("4");
+                if (viewportWidth > viewportHeight){
+                    // buttons on right
+                    buttonGoBack.style.top = "" + (1+minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonGoBack.style.left = "" + (0) + "px";
+                    buttonMenu.style.top = "" + (2+minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonMenu.style.left = "" + (0) + "px";
+                    buttonHelp.style.top = "" + (2+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonHelp.style.left = "" + (0) + "px";
+                    buttonVoice.style.top = "" + (3+minGapSpace*4+buttonsDimension*3) + "px";
+                    buttonVoice.style.left = "" + (0) + "px";
+                } else {
+                    // buttons on bottom
+                    buttonGoBack.style.top = "" + (0) + "px";
+                    buttonGoBack.style.left = "" + (1+minGapSpace*1+buttonsDimension*0) + "px";
+                    buttonMenu.style.top = "" + (0) + "px";
+                    buttonMenu.style.left = "" + (2+minGapSpace*2+buttonsDimension*1) + "px";
+                    buttonHelp.style.top = "" + (0) + "px";
+                    buttonHelp.style.left = "" + (2+minGapSpace*3+buttonsDimension*2) + "px";
+                    buttonVoice.style.top = "" + (0) + "px";
+                    buttonVoice.style.left = "" + (3+minGapSpace*4+buttonsDimension*3) + "px";
+                }                
             break;
             default:
                 // should never happen, all gaps same dimension
+                alert("default: "+ (gapsSpace - minGapSpace*5));
         }        
-        
-        
         printMessageOnMapCanvas("Function: "+"arrangeGui" + "\n" + Date());
     }
     
