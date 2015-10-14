@@ -8,16 +8,71 @@
     var buttonMenu = null;
     var buttonHelp = null;
     var buttonVoice = null;
+    var viewportWidth = null;
+    var viewportHeight = null;
+    var minZoomLevel = 0;
+    var maxZoomLevel = 19;
+    var zoomLevel = minZoomLevel;
+    var latDeg = 0.0;  // Min is -85.0511 Max is +85.0511 in a Mercator projection
+    var lonDeg = 0.0;  // Min is -180.0   Max is +180.0
+    var bboxMinLat = -85.0511;
+    var bboxMinLon = -180.0;
+    var bboxMaxLat = 85.0511;
+    var bboxMaxLon = 180.0; 
+
+    var tilesNumCols = 0;
+    var tilesNumRows = 0;
+    
+    function printPositionMessage(){
+        var tileId = deg2num(latDeg, lonDeg, zoomLevel);
+        var deltaLonLatTile = deltaLonLat4aTile(tileId.z,tileId.y,tileId.x);
+        var positionIntoTile = deg2pixel(latDeg, lonDeg, zoomLevel);
+        var message = "";
+        message += "---------------------------" + "\n";
+        message += "zoomLevel       : " + zoomLevel + "\n";
+        message += "latDeg          : " + latDeg + "\n";
+        message += "lonDeg          : " + lonDeg + "\n";
+        message += "---------------------------" + "\n";
+        message += "central tile ID : " + tileId.z + "/" + tileId.y + "/" + tileId.x + "\n";
+        message += "dLonForTile     : " + deltaLonLatTile.dLon + "\n";
+        message += "dLatForTile     : " + deltaLonLatTile.dLat + "\n";
+        message += "YposIntoTile    : " + positionIntoTile.dy + "\n";
+        message += "XposIntoTile    : " + positionIntoTile.dx + "\n";
+        message += "viewportWidth   : " + viewportWidth + "\n";
+        message += "viewportHeight  : " + viewportHeight + "\n";
+        message += "---------------------------" + "\n";
+        //message += Date();
+        //printMessageOnMapCanvas("Function: "+"onZoom(" + deltaZ +")\n" + Date());    
+        printMessageOnMapCanvas(message);
+    }
     
     
     function onPan(deltaX,deltaY){
+        // Lat = Y Lon = X
+        var tileId = deg2num(latDeg, lonDeg, zoomLevel);
+        var deltaLonLatTile = deltaLonLat4aTile(tileId.z,tileId.y,tileId.x);
+        var deltaLon = deltaLonLatTile.dLon / 256 * deltaX;
+        var deltaLat = deltaLonLatTile.dLat / 256 * deltaY;
+        lonDeg -= deltaLon;
+        latDeg -= deltaLat;
+        if (lonDeg < bboxMinLon){ lonDeg = bboxMinLon; }
+        if (lonDeg > bboxMaxLon){ lonDeg = bboxMaxLon; }
+        if (latDeg < bboxMinLat){ latDeg = bboxMinLat; }
+        if (latDeg > bboxMaxLat){ latDeg = bboxMaxLat; }
+
         redrawMapCanvas();
-        printMessageOnMapCanvas("Function: "+"onPan(" + deltaX + "," + deltaY + ")\n" + Date());
+        //printMessageOnMapCanvas("Function: "+"onPan(" + deltaX + "," + deltaY + ")\n" + Date());
+        //printPositionMessage();
+        console.log("lonDeg: " + lonDeg + ", latDeg: " + latDeg);
     }
     
     function onZoom(deltaZ){
+        var targetZoomLevel = zoomLevel + (-deltaZ);
+        if ((targetZoomLevel >= minZoomLevel ) && (targetZoomLevel<=maxZoomLevel)){
+            zoomLevel = targetZoomLevel;
+        }
         redrawMapCanvas();
-        printMessageOnMapCanvas("Function: "+"onZoom(" + deltaZ +")\n" + Date());    
+        //printPositionMessage();
     }
     
     function onIdentify(canvasPosX,canvasPosY){
@@ -42,7 +97,53 @@
         }
         return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
     }
+    
+    function deltaLonLat4aTile(zoom,y,x){
+        var pos1 = num2deg(x, y, zoom);
+        var pos2 = num2deg(x+1, y+1, zoom);
+        var deltaLat = pos2.lat - pos1.lat;
+        var deltaLon = pos2.lon - pos1.lon;
+        return {dLat:deltaLat,dLon:deltaLon};
+    }
+    
+    
+    function deg2num (_latDeg, _lonDeg, _zoom){
+        // From http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+        // and http://stackoverflow.com/questions/135909/what-is-the-method-for-converting-radians-to-degrees
+        // Lat = Y Lon = X
+        var latRad = _latDeg * (Math.PI / 180.0);
+        var n = Math.pow(2,_zoom);
+        var xtile = Math.floor((_lonDeg + 180.0)/360.0*n);
+        var ytile = Math.floor((1.0 - Math.log(Math.tan(latRad) + (1 / Math.cos(latRad))) / Math.PI) / 2.0 * n);
+        return {z:_zoom,y:ytile,x:xtile};
+        
+    }
 
+    function deg2pixel(_latDeg, _lonDeg, _zoom){
+        // From https://help.openstreetmap.org/questions/747/given-a-latlon-how-do-i-find-the-precise-position-on-the-tile
+        // The fractional part indicates the position within the tile. As a tile is 256 pixel wide, 
+        // multiplying the fractional part with 256 will give you the pixel position from the top left.
+        // Lat = Y Lon = X
+        var latRad = _latDeg * (Math.PI / 180.0);
+        var n = Math.pow(2,_zoom);
+        var deltaX = Math.round((((_lonDeg + 180.0)/360.0*n)%1)*255);
+        var deltaY = Math.round((((1.0 - Math.log(Math.tan(latRad) + (1 / Math.cos(latRad))) / Math.PI) / 2.0 * n)%1)*255);
+        return {dy:deltaY,dx:deltaX};
+    }
+    
+    function num2deg(xtile, ytile, zoom){
+        // From http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+        // and http://stackoverflow.com/questions/135909/what-is-the-method-for-converting-radians-to-degrees
+        // Lat = Y Lon = X
+        var n = Math.pow(2,zoom);
+        var lonDeg = xtile / n * 360.0 - 180.0;
+        var latRad = Math.atan(Math.sinh(Math.PI * (1 - 2 * ytile / n)));
+        var latDeg = latRad * (180.0 / Math.PI);
+        return {lat:latDeg, lon:lonDeg};
+    }
+    
+    
+    
     /**
      * Create Map canvas and Id canvas
      */
@@ -81,9 +182,9 @@
      * Resize Map and id canvas to full screen
      */
     function arrangeGui(){
-        var buttonsDimension = 80; // todo: make dynamic
-        var viewportWidth = parseInt(""+viewport().width,10);
-        var viewportHeight = parseInt(""+viewport().height,10);
+        var buttonsDimension = 100; // now dynamic
+        viewportWidth = parseInt(""+viewport().width,10);
+        viewportHeight = parseInt(""+viewport().height,10);
         
         var mapWidth = viewportWidth;
         var mapHeight = viewportHeight;
@@ -97,7 +198,7 @@
         
         if (viewportWidth > viewportHeight){
             buttonsDimension = Math.floor(viewportHeight/4.0);
-            if ( buttonsDimension > 150 ) {buttonsDimension = 130;}
+            if ( buttonsDimension > 100 ) {buttonsDimension = 100;}
             // buttons on right
             mapWidth -= buttonsDimension;
             buttonWidth = buttonsDimension;
@@ -106,7 +207,7 @@
             
         } else {
             buttonsDimension = Math.floor(viewportWidth/4.0);
-            if ( buttonsDimension > 150 ) {buttonsDimension = 130;}
+            if ( buttonsDimension > 100 ) {buttonsDimension = 100;}
             // buttons on bottom
             mapHeight -= buttonsDimension;
             buttonHeight = buttonsDimension;
@@ -329,15 +430,76 @@
                 // should never happen, all gaps same dimension
                 alert("default: "+ (gapsSpace - minGapSpace*5));
         }        
-        printMessageOnMapCanvas("Function: "+"arrangeGui" + "\n" + Date());
+        //printMessageOnMapCanvas("Function: "+"arrangeGui" + "\n" + Date());
+        printPositionMessage();
     }
     
     /**
      * Support method to completly erase the map canvas
      */
     function redrawMapCanvas(){
+        // TODO: optimize
         var context = mapCanvas.getContext("2d");
         context.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+        // 
+        var tileId = deg2num(latDeg, lonDeg, zoomLevel);
+        var positionIntoTile = deg2pixel(latDeg, lonDeg, zoomLevel);
+        
+        var currentPosX = -positionIntoTile.dx;
+        var currentPosY = -positionIntoTile.dy;
+        var currentXtile = tileId.x - ((tilesNumCols-1)/2);  // is always an integer since tilesNumCols is odd
+        var currentYtile = tileId.y - ((tilesNumRows-1)/2);  // is always an integer since tilesNumRows is odd
+        for (var i = 0; i < tilesNumRows; i++){      // on X
+            for (var j = 0; j < tilesNumCols; j++){  // on Y
+                if ((i+j+currentXtile+currentYtile+1+1)%2===0){
+                    context.fillStyle = "#8888CC";
+                }else{
+                    context.fillStyle = "#8888FF";
+                }
+                context.fillRect(currentPosX,currentPosY,256,256);
+                context.font="15px Courier";
+                context.fillStyle = "#000000";
+                context.fillText("z: "+tileId.z+" x: "+(currentXtile+j+1)+" y: "+(currentYtile+i+1),currentPosX+10,currentPosY+128);
+                currentPosX += 256; 
+            }
+            currentPosX = -positionIntoTile.dx;
+            currentPosY += 256;
+        }
+        
+        // test
+        //tileId.z = 0;
+        //tileId.y = 0;
+        //tileId.x = 0;
+        /*
+        var tmpImage = new Image();
+        tmpImage.onload = function(){
+            //context.drawImage(this, 0, 0);
+            var tmp = this.src.split("/");
+            var y = tmp.pop();
+            var x = tmp.pop();
+            var z = tmp.pop();
+            //printMessageOnMapCanvas(z + "/" + x + "/" + y);
+        }
+        tmpImage.src = "https://a.tile.thunderforest.com/transport/" + tileId.z + "/" + tileId.x + "/" + tileId.y + ".png" ;
+        */
+        
+    }
+    
+    function configureTileMap(){
+        // to be called always after arrangeGui()
+        var nCols = Math.ceil(viewportWidth/256)+1;
+        tilesNumCols = (nCols%2===0?nCols+1:nCols);
+        var nRows = Math.ceil(viewportHeight/256)+1;
+        tilesNumRows =(nRows%2===0?nRows+1:nRows);
+        
+        console.log("now tilMap is C:" +  tilesNumCols + "x R:" + tilesNumRows);
+    }
+    
+    
+    function onResize(){
+        arrangeGui();
+        configureTileMap();
+        redrawMapCanvas();
     }
     
     /**
@@ -346,7 +508,7 @@
     function printMessageOnMapCanvas(message){
         var lines = message.split("\n");
         var context=mapCanvas.getContext("2d");
-        context.font="20px Arial";
+        context.font="15px Courier";
         for (var i = 0; i < lines.length; i++) {
             context.fillText(lines[i],10,50+i*25);
         } 
@@ -357,8 +519,8 @@
      */
     function FrontendManager(mainElementId) {
         createChilds(mainElementId);
-        arrangeGui();
-        window.addEventListener("resize", arrangeGui);
+        onResize();
+        window.addEventListener("resize", onResize);
         GestureManager(mapCanvas,onPan,onZoom,onIdentify,[buttonGoBack,buttonMenu,buttonHelp,buttonVoice],onButton);
         //MapManager(mapCanvas)
         return;

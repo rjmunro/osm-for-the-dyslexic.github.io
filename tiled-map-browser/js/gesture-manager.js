@@ -10,15 +10,18 @@
     var deltaY = 0;
     
     function onPan(ev){
-        if (ev.isFirst) {
-            deltaX = 0;
-            deltaY = 0;            
-        }
         var currDeltaX = ev.deltaX - deltaX;
         var currDeltaY = ev.deltaY - deltaY;
         deltaX = ev.deltaX;
         deltaY = ev.deltaY;
+        if ((Math.abs(currDeltaX) > 50) ||(Math.abs(currDeltaY) > 50 )){
+            // hack: when starting a new pan it goes to the previos location without it
+            currDeltaX = 0;
+            currDeltaY = 0;
+        }
+        
         onPanFunction(currDeltaX,currDeltaY);
+        //console.log(ev.type + " X: " + currDeltaX + " Y: " + currDeltaY );
     }
     
     function onPress(ev){
@@ -67,7 +70,7 @@
             drag_block_vertical: true,
             drag_min_distance: 0        
         });
-        mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+        mc.add(new Hammer.Pan({ threshold: 10, pointers: 0 }));
         mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(mc.get('pan'));
         mc.add(new Hammer.Press({ threshold: 10 })).recognizeWith(mc.get('pan'));
         mc.on("panleft panright panup pandown", onPan);
