@@ -18,50 +18,10 @@
     var bboxMinLat = -85.0511;
     var bboxMinLon = -180.0;
     var bboxMaxLat = 85.0511;
-    var bboxMaxLon = 180.0;
-    var tileMapBaseUrl = "http://a.tile.openstreetmap.org/";
-    var tileIdBaseUrl = "";
+    var bboxMaxLon = 180.0; 
 
-    
     var tilesNumCols = 0;
     var tilesNumRows = 0;
-    
-    var renderTimeout = null;
-    
-    // ------------------------------------------------------------------------
-    // tile cache
-    // ------------------------------------------------------------------------
-    var tileCache = {};
-    var tileCacheLength = 0;
-    function getTileImage(mapType,z,x,y){
-        // check if tile id is valid
-        // X goes from 0 to 2^zoom − 1 
-        // Y goes from 0 to 2^zoom − 1
-        var max = Math.pow(2,z) - 1;
-        if (x < 0) {return null;}
-        if (x > max) {return null;}
-        if (y < 0) {return null;}
-        if (y > max) {return null;}
-        var tileName = "" + z + "/" + x + "/" + y;
-    
-        //console.log("tileCacheLength: " + tileCacheLength);
-        // to clean an image just set the object to null
-        var imgElement = tileCache[""+mapType+"_"+tileName];
-        if (typeof imgElement === "undefined") {
-            tileCache[""+mapType+"_"+tileName] = null;
-            tileCacheLength ++;
-            imgElement = new Image();
-            imgElement.onload = function(){
-                tileCache[""+mapType+"_"+tileName] = this;
-                clearTimeout(renderTimeout);
-                renderTimeout = setTimeout(redrawMapCanvas,300); // 300ms
-            }
-            imgElement.src = tileMapBaseUrl + tileName + ".png" ;        
-            return null;
-        }
-        return imgElement;
-    }
-    
     
     function printPositionMessage(){
         var tileId = deg2num(latDeg, lonDeg, zoomLevel);
@@ -103,7 +63,7 @@
         redrawMapCanvas();
         //printMessageOnMapCanvas("Function: "+"onPan(" + deltaX + "," + deltaY + ")\n" + Date());
         //printPositionMessage();
-        //console.log("lonDeg: " + lonDeg + ", latDeg: " + latDeg);
+        console.log("lonDeg: " + lonDeg + ", latDeg: " + latDeg);
     }
     
     function onZoom(deltaZ){
@@ -490,30 +450,17 @@
         var currentPosY = -positionIntoTile.dy;
         var currentXtile = tileId.x - ((tilesNumCols-1)/2);  // is always an integer since tilesNumCols is odd
         var currentYtile = tileId.y - ((tilesNumRows-1)/2);  // is always an integer since tilesNumRows is odd
-        var imageTile = null;
-        //var tileName = null;
         for (var i = 0; i < tilesNumRows; i++){      // on X
             for (var j = 0; j < tilesNumCols; j++){  // on Y
-                
-                //tileName = "" + tileId.z + "/" + (currentXtile+j+1) + "/" + (currentYtile+i+1);
-                imageTile = getTileImage("MAP",tileId.z,(currentXtile+j+1),(currentYtile+i+1));
-                if (imageTile === null){
-                    // render the replacement
-                    if ((i+j+currentXtile+currentYtile+1+1)%2===0){
-                        context.fillStyle = "#DDDDDD";
-                    }else{
-                        context.fillStyle = "#EEEEEE";
-                    }
-                    context.fillRect(currentPosX,currentPosY,256,256);
-                    context.font="15px Courier";
-                    context.fillStyle = "#000000";
-                    context.fillText("z: "+tileId.z+" x: "+(currentXtile+j+1)+" y: "+(currentYtile+i+1),currentPosX+10,currentPosY+128);
+                if ((i+j+currentXtile+currentYtile+1+1)%2===0){
+                    context.fillStyle = "#8888CC";
                 }else{
-                    // render the tile
-                    context.drawImage(imageTile, currentPosX, currentPosY,256,256);
+                    context.fillStyle = "#8888FF";
                 }
-            
-
+                context.fillRect(currentPosX,currentPosY,256,256);
+                context.font="15px Courier";
+                context.fillStyle = "#000000";
+                context.fillText("z: "+tileId.z+" x: "+(currentXtile+j+1)+" y: "+(currentYtile+i+1),currentPosX+10,currentPosY+128);
                 currentPosX += 256; 
             }
             currentPosX = -positionIntoTile.dx;
