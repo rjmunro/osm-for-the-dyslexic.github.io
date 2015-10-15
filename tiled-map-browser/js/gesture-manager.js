@@ -71,7 +71,7 @@
             drag_min_distance: 0        
         });
         mc.add(new Hammer.Pan({ threshold: 10, pointers: 0 }));
-        mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(mc.get('pan'));
+        mc.add(new Hammer.Pinch({ threshold: 50 })).recognizeWith(mc.get('pan'));
         mc.add(new Hammer.Press({ threshold: 10 })).recognizeWith(mc.get('pan'));
         mc.on("panleft panright panup pandown", onPan);
         mc.on("pinchin", zoomOut);
