@@ -1,5 +1,6 @@
 * {/*cursor:none;*/}
-body{overflow:hidden;}
+html{height:100%;width:100%;}
+body{height:100%;width:100%;overflow:hidden;}
 #map{zIndex:3;}
 #map-canvas{
     position: absolute; 
