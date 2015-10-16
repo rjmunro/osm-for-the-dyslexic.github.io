@@ -31,17 +31,17 @@
     
     function zoomOut(){
         zoomCounter -= 1;
-        if (20 < Math.abs(zoomCounter)){
+        if (10 < Math.abs(zoomCounter)){
             zoomCounter = 0;
-            onZoomFunction(-1);
+            onZoomFunction(1);
         }
     }
 
     function zoomIn(){
         zoomCounter += 1;
-        if (20 < Math.abs(zoomCounter)){
+        if (10 < Math.abs(zoomCounter)){
             zoomCounter = 0;
-            onZoomFunction(1);
+            onZoomFunction(-1);
         }
     }
     
@@ -50,9 +50,9 @@
         var e = window.event || e; // old IE support
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         if (delta < 0) {
-            onZoomFunction(1);
-        }else{
             onZoomFunction(-1);
+        }else{
+            onZoomFunction(1);
         }
         return false;
     }
