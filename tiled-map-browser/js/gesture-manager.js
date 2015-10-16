@@ -8,6 +8,7 @@
     var onButton = null;
     var deltaX = 0;
     var deltaY = 0;
+    var zoomCounter = 0;
     
     function onPan(ev){
         var currDeltaX = ev.deltaX - deltaX;
@@ -29,11 +30,19 @@
     }
     
     function zoomOut(){
-        onZoomFunction(-1);
+        zoomCounter -= 1;
+        if (100 < Math.abs(zoomCounter)){
+            zoomCounter = 0;
+            onZoomFunction(-1);
+        }
     }
 
     function zoomIn(){
-        onZoomFunction(1);
+        zoomCounter += 1;
+        if (100 < Math.abs(zoomCounter)){
+            zoomCounter = 0;
+            onZoomFunction(1);
+        }
     }
     
     function mouseWheelHandler(e) {
@@ -41,9 +50,9 @@
         var e = window.event || e; // old IE support
         var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
         if (delta < 0) {
-            zoomIn();
+            onZoomFunction(1);
         }else{
-            zoomOut();
+            onZoomFunction(-1);
         }
         return false;
     }
@@ -71,7 +80,7 @@
             drag_min_distance: 0        
         });
         mc.add(new Hammer.Pan({ threshold: 10, pointers: 0 }));
-        mc.add(new Hammer.Pinch({ threshold: 50 })).recognizeWith(mc.get('pan'));
+        mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(mc.get('pan'));
         mc.add(new Hammer.Press({ threshold: 10 })).recognizeWith(mc.get('pan'));
         mc.on("panleft panright panup pandown", onPan);
         mc.on("pinchin", zoomOut);
