@@ -31,7 +31,7 @@
     
     function zoomOut(){
         zoomCounter -= 1;
-        if (100 < Math.abs(zoomCounter)){
+        if (20 < Math.abs(zoomCounter)){
             zoomCounter = 0;
             onZoomFunction(-1);
         }
@@ -39,7 +39,7 @@
 
     function zoomIn(){
         zoomCounter += 1;
-        if (100 < Math.abs(zoomCounter)){
+        if (20 < Math.abs(zoomCounter)){
             zoomCounter = 0;
             onZoomFunction(1);
         }
