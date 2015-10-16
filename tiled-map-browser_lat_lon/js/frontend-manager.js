@@ -13,10 +13,12 @@
     var minZoomLevel = 0;
     var maxZoomLevel = 19;
     var zoomLevel = minZoomLevel;
-    var xTile = 0;
-    var yTile = 0;
-    var xPosIntoTile = 128;
-    var yPosIntoTile = 128;
+    var latDeg = 0.0;  // Min is -85.0511 Max is +85.0511 in a Mercator projection
+    var lonDeg = 0.0;  // Min is -180.0   Max is +180.0
+    var bboxMinLat = -85.0511;
+    var bboxMinLon = -180.0;
+    var bboxMaxLat = 85.0511;
+    var bboxMaxLon = 180.0;
     var tileMapBaseUrl = "http://a.tile.openstreetmap.org/";
     var tileIdBaseUrl = "";
 
@@ -60,7 +62,7 @@
         return imgElement;
     }
     
-    /*
+    
     function printPositionMessage(){
         var tileId = deg2num(latDeg, lonDeg, zoomLevel);
         var deltaLonLatTile = deltaLonLat4aTile(tileId.z,tileId.y,tileId.x);
@@ -83,79 +85,35 @@
         //printMessageOnMapCanvas("Function: "+"onZoom(" + deltaZ +")\n" + Date());    
         printMessageOnMapCanvas(message);
     }
-    */
+    
     
     function onPan(deltaX,deltaY){
-        xPosIntoTile -= deltaX;
-        yPosIntoTile -= deltaY;
-        var maxTile = Math.pow(2,zoomLevel) - 1;
-        if (xPosIntoTile < 0){
-            xPosIntoTile = 255 + xPosIntoTile; // since it is negative
-            xTile -= 1;
-            if (xTile < 0) {xTile = 0;xPosIntoTile=0;}
-        }
-        if (yPosIntoTile < 0){
-            yPosIntoTile = 255 + yPosIntoTile; // since it is negative
-            yTile -= 1;
-            if (yTile < 0) {yTile = 0;yPosIntoTile=0;}
-            
-        }
-        if (xPosIntoTile > 255){
-            xPosIntoTile = xPosIntoTile - 255;
-            xTile += 1;
-            if (xTile > maxTile) {xTile = maxTile;xPosIntoTile=255;}
-        }
-        if (yPosIntoTile > 255){
-            yPosIntoTile = yPosIntoTile - 255;
-            yTile += 1;
-            if (yTile > maxTile) {yTile = maxTile;yPosIntoTile=255;}
-        }
+        // Lat = Y Lon = X
+        var tileId = deg2num(latDeg, lonDeg, zoomLevel);
+        var deltaLonLatTile = deltaLonLat4aTile(tileId.z,tileId.y,tileId.x);
+        var deltaLon = deltaLonLatTile.dLon / 256 * deltaX;
+        var deltaLat = deltaLonLatTile.dLat / 256 * deltaY;
+        lonDeg -= deltaLon;
+        latDeg -= deltaLat;
+        if (lonDeg < bboxMinLon){ lonDeg = bboxMinLon; }
+        if (lonDeg > bboxMaxLon){ lonDeg = bboxMaxLon; }
+        if (latDeg < bboxMinLat){ latDeg = bboxMinLat; }
+        if (latDeg > bboxMaxLat){ latDeg = bboxMaxLat; }
+
         redrawMapCanvas();
+        //printMessageOnMapCanvas("Function: "+"onPan(" + deltaX + "," + deltaY + ")\n" + Date());
+        //printPositionMessage();
+        //console.log("lonDeg: " + lonDeg + ", latDeg: " + latDeg);
+        //printPositionMessage();
     }
     
     function onZoom(deltaZ){
-        var targetZoomLevel = zoomLevel + deltaZ;
-        if ((targetZoomLevel < minZoomLevel ) || (targetZoomLevel>maxZoomLevel)){
-            // do nothing
-            return;
-        }
-    
-        if (deltaZ > 0){
-            // zoomin
-            zoomLevel += 1;
-            if (xPosIntoTile<128){
-                xTile = 2*xTile;
-                xPosIntoTile = 2*xPosIntoTile;
-            }else{
-                xTile = 2*xTile+1;
-                xPosIntoTile = 2*(xPosIntoTile-128);
-            }
-            if (yPosIntoTile<128){
-                yTile = 2*yTile;
-                yPosIntoTile = 2*yPosIntoTile;
-            }else{
-                yTile = 2*yTile+1;
-                yPosIntoTile = 2*(yPosIntoTile-128);
-            }
-        }else{
-            // zoomout
-            zoomLevel -= 1;
-            if (xTile%2===0){
-                xTile = xTile / 2;
-                xPosIntoTile = Math.round(xPosIntoTile / 2);
-            }else{
-                xTile = Math.floor(xTile / 2);
-                xPosIntoTile = 128 + Math.round(xPosIntoTile / 2);
-            }
-            if (yTile%2===0){
-                yTile = yTile / 2;
-                yPosIntoTile = Math.round(yPosIntoTile / 2);
-            }else{
-                yTile = Math.floor(yTile / 2);
-                yPosIntoTile = 128 + Math.round(yPosIntoTile / 2);
-            }
+        var targetZoomLevel = zoomLevel + (-deltaZ);
+        if ((targetZoomLevel >= minZoomLevel ) && (targetZoomLevel<=maxZoomLevel)){
+            zoomLevel = targetZoomLevel;
         }
         redrawMapCanvas();
+        //printPositionMessage();
     }
     
     function onIdentify(canvasPosX,canvasPosY){
@@ -181,9 +139,6 @@
         return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
     }
     
-    /*
-    // utility methods currently unused
-    
     function deltaLonLat4aTile(zoom,y,x){
         var pos1 = num2deg(x, y, zoom);
         var pos2 = num2deg(x+1, y+1, zoom);
@@ -191,6 +146,7 @@
         var deltaLon = pos2.lon - pos1.lon;
         return {dLat:deltaLat,dLon:deltaLon};
     }
+    
     
     function deg2num (_latDeg, _lonDeg, _zoom){
         // From http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
@@ -227,7 +183,7 @@
         var latDeg = latRad * (180.0 / Math.PI);
         return {lat:latDeg, lon:lonDeg};
     }
-    */
+    
     
     
     /**
@@ -284,7 +240,7 @@
         
         if (viewportWidth > viewportHeight){
             buttonsDimension = Math.floor(viewportHeight/4.0);
-            if ( buttonsDimension > 10 ) {buttonsDimension = 10;}
+            if ( buttonsDimension > 100 ) {buttonsDimension = 100;}
             // buttons on right
             mapWidth -= buttonsDimension;
             buttonWidth = buttonsDimension;
@@ -293,7 +249,7 @@
             
         } else {
             buttonsDimension = Math.floor(viewportWidth/4.0);
-            if ( buttonsDimension > 10 ) {buttonsDimension = 10;}
+            if ( buttonsDimension > 100 ) {buttonsDimension = 100;}
             // buttons on bottom
             mapHeight -= buttonsDimension;
             buttonHeight = buttonsDimension;
@@ -527,41 +483,62 @@
         // TODO: optimize
         var context = mapCanvas.getContext("2d");
         context.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
-        var currentPosXonCanvas = Math.floor(mapCanvas.width / 2) - xPosIntoTile - (256 *((tilesNumCols-1)/2));
-        var currentPosYonCanvas = Math.floor(mapCanvas.height/ 2) - yPosIntoTile - (256 *((tilesNumRows-1)/2));
-        var currentXtile = xTile - ((tilesNumCols-1)/2);  // is always an integer since tilesNumCols is odd
-        var currentYtile = yTile - ((tilesNumRows-1)/2);  // is always an integer since tilesNumRows is odd
+        // 
+        var tileId = deg2num(latDeg, lonDeg, zoomLevel);
+        var positionIntoTile = deg2pixel(latDeg, lonDeg, zoomLevel);
+        console.log("positionIntoTile: " + positionIntoTile.dx + " " + positionIntoTile.dy);
+        
+        var currentPosX = -positionIntoTile.dx;
+        var currentPosY = -positionIntoTile.dy;
+        var currentXtile = tileId.x - ((tilesNumCols-1)/2);  // is always an integer since tilesNumCols is odd
+        var currentYtile = tileId.y - ((tilesNumRows-1)/2);  // is always an integer since tilesNumRows is odd
         var imageTile = null;
         //var tileName = null;
         for (var i = 0; i < tilesNumRows; i++){      // on X
             for (var j = 0; j < tilesNumCols; j++){  // on Y
                 
-                imageTile = getTileImage("MAP",zoomLevel,(currentXtile+j),(currentYtile+i));
+                //tileName = "" + tileId.z + "/" + (currentXtile+j+1) + "/" + (currentYtile+i+1);
+                imageTile = getTileImage("MAP",tileId.z,(currentXtile+j+1),(currentYtile+i+1));
                 if (imageTile === null){
                     // render the replacement
-                    if ((i+j+currentXtile+currentYtile)%2===0){
+                    if ((i+j+currentXtile+currentYtile+1+1)%2===0){
                         context.fillStyle = "#DDDDDD";
                     }else{
                         context.fillStyle = "#EEEEEE";
                     }
-                    context.fillRect(currentPosXonCanvas,currentPosYonCanvas,256,256);
+                    context.fillRect(currentPosX,currentPosY,256,256);
                     context.font="15px Courier";
                     context.fillStyle = "#000000";
-                    context.fillText("z: "+zoomLevel+" x: "+(currentXtile+j)+" y: "+(currentYtile+i),currentPosXonCanvas+10,currentPosYonCanvas+128);
-                    
-                    
-                    //context.fillText(""+zoomLevel+" "+(currentXtile+j)+" "+(currentYtile+i),currentPosXonCanvas+10,currentPosYonCanvas+118);
-                    //context.fillText(""+currentPosXonCanvas + " " + currentPosYonCanvas,currentPosXonCanvas+10,currentPosYonCanvas+138);
-                    //context.fillText("("+xPosIntoTile + " " + yPosIntoTile+ ")",currentPosXonCanvas+10,currentPosYonCanvas+158);
+                    context.fillText("z: "+tileId.z+" x: "+(currentXtile+j+1)+" y: "+(currentYtile+i+1),currentPosX+10,currentPosY+128);
                 }else{
                     // render the tile
-                    context.drawImage(imageTile, currentPosXonCanvas, currentPosYonCanvas,256,256);
+                    context.drawImage(imageTile, currentPosX, currentPosY,256,256);
                 }
-                currentPosXonCanvas += 256; 
+            
+
+                currentPosX += 256; 
             }
-            currentPosXonCanvas = Math.floor(mapCanvas.width / 2) - xPosIntoTile - (256 *((tilesNumCols-1)/2));
-            currentPosYonCanvas += 256;
+            currentPosX = -positionIntoTile.dx;
+            currentPosY += 256;
         }
+        
+        // test
+        //tileId.z = 0;
+        //tileId.y = 0;
+        //tileId.x = 0;
+        /*
+        var tmpImage = new Image();
+        tmpImage.onload = function(){
+            //context.drawImage(this, 0, 0);
+            var tmp = this.src.split("/");
+            var y = tmp.pop();
+            var x = tmp.pop();
+            var z = tmp.pop();
+            //printMessageOnMapCanvas(z + "/" + x + "/" + y);
+        }
+        tmpImage.src = "https://a.tile.thunderforest.com/transport/" + tileId.z + "/" + tileId.x + "/" + tileId.y + ".png" ;
+        */
+        
     }
     
     function configureTileMap(){
