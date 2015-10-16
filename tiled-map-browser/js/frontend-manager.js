@@ -284,7 +284,7 @@
         
         if (viewportWidth > viewportHeight){
             buttonsDimension = Math.floor(viewportHeight/4.0);
-            if ( buttonsDimension > 10 ) {buttonsDimension = 10;}
+            if ( buttonsDimension > 100 ) {buttonsDimension = 100;}
             // buttons on right
             mapWidth -= buttonsDimension;
             buttonWidth = buttonsDimension;
@@ -293,7 +293,7 @@
             
         } else {
             buttonsDimension = Math.floor(viewportWidth/4.0);
-            if ( buttonsDimension > 10 ) {buttonsDimension = 10;}
+            if ( buttonsDimension > 100 ) {buttonsDimension = 100;}
             // buttons on bottom
             mapHeight -= buttonsDimension;
             buttonHeight = buttonsDimension;
