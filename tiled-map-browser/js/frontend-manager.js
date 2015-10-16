@@ -104,6 +104,7 @@
         //printMessageOnMapCanvas("Function: "+"onPan(" + deltaX + "," + deltaY + ")\n" + Date());
         //printPositionMessage();
         //console.log("lonDeg: " + lonDeg + ", latDeg: " + latDeg);
+        printPositionMessage();
     }
     
     function onZoom(deltaZ){
@@ -112,7 +113,7 @@
             zoomLevel = targetZoomLevel;
         }
         redrawMapCanvas();
-        //printPositionMessage();
+        printPositionMessage();
     }
     
     function onIdentify(canvasPosX,canvasPosY){
