@@ -83,8 +83,8 @@
         mc.add(new Hammer.Pinch({ threshold: 0 })).recognizeWith(mc.get('pan'));
         mc.add(new Hammer.Press({ threshold: 10 })).recognizeWith(mc.get('pan'));
         mc.on("panleft panright panup pandown", onPan);
-        mc.on("pinchin", zoomOut);
-        mc.on("pinchout", zoomIn);
+        mc.on("pinchin", zoomIn);
+        mc.on("pinchout", zoomOut);
         mc.on("press", onPress);
         
         if (mapCanvas.addEventListener) {
