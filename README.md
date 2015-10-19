@@ -1,1 +1,1 @@
-# openstreettiles.github.io
+# osm-for-the-dyslexic.github.io
