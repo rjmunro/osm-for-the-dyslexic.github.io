@@ -45,7 +45,7 @@
             if (tileCache.hasOwnProperty(name)) {
                 if (tileCache[name] !== null){
                     tmpName = name.substring(4); // MAP_ or IDS_ removed
-                    tmpSplit = tmpName("/",3);
+                    tmpSplit = tmpName.split("/",3);
                     tileZ = parseInt(tmpSplit[0]);
                     tileX = parseInt(tmpSplit[1]);
                     tileY = parseInt(tmpSplit[2]);
