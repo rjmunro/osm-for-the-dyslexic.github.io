@@ -17,14 +17,20 @@
     var yTile = 0;
     var xPosIntoTile = 128;
     var yPosIntoTile = 128;
-    var tileMapBaseUrl = "http://a.tile.openstreetmap.org/";
+    var tileMapBaseUrl = ["http://a.tile.openstreetmap.org/"];
     var tileIdBaseUrl = "";
 
     
     var tilesNumCols = 0;
     var tilesNumRows = 0;
     
-    var renderTimeout = null;
+    //var renderTimeout = null;
+    
+    function getRandomElement(aVector) {
+        
+        return Math.floor(Math.random() * (max - 0 + 1)) + 0;
+    }
+    
     
     // ------------------------------------------------------------------------
     // tile cache
@@ -51,9 +57,13 @@
             imgElement = new Image();
             imgElement.onload = function(){
                 tileCache[""+mapType+"_"+tileName] = this;
-                clearTimeout(renderTimeout);
-                renderTimeout = setTimeout(redrawMapCanvas,300); // 300ms
+                if (z === zoomLevel){
+                    redrawMapCanvas();
+                }
+                //clearTimeout(renderTimeout);
+                //renderTimeout = setTimeout(redrawMapCanvas,300); // 300ms
             }
+            
             imgElement.src = tileMapBaseUrl + tileName + ".png" ;        
             return null;
         }
