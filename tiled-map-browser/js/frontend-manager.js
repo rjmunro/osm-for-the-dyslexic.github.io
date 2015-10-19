@@ -49,7 +49,7 @@
                     tileZ = parseInt(tmpSplit[0]);
                     tileX = parseInt(tmpSplit[1]);
                     tileY = parseInt(tmpSplit[2]);
-                    if ((tileZ !== ) || () )
+                    //if ((tileZ !== ) || () )
                     // name = mapType_0z/0x/0y
                     if (1 === randomYesNo()){
                         try {
