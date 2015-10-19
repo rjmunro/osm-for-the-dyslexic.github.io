@@ -17,7 +17,7 @@
     var yTile = 0;
     var xPosIntoTile = 128;
     var yPosIntoTile = 128;
-    var tileMapBaseUrl = ["http://a.tile.openstreetmap.org/"];
+    var tileMapBaseUrls = ["http://a.tile.openstreetmap.org/","http://b.tile.openstreetmap.org/","http://c.tile.openstreetmap.org/"];
     var tileIdBaseUrl = "";
 
     
@@ -27,16 +27,53 @@
     //var renderTimeout = null;
     
     function getRandomElement(aVector) {
-        
-        return Math.floor(Math.random() * (max - 0 + 1)) + 0;
+        var max = aVector.length - 1;
+        return aVector[Math.floor(Math.random() * (max - 0 + 1)) + 0];
     }
     
+    function randomYesNo(){
+        return Math.floor((Math.random() * 2) + 0);
+    }
+    
+    function cleanupTileCache(){
+        console.log("before cleanup tilecache is "+ tileCacheLength + " long");
+        var tileZ = 0;
+        var tileX = 0;
+        var tileY = 0;
+        var tmpName, tmpSplit;
+        for (var name in tileCache) {
+            if (tileCache.hasOwnProperty(name)) {
+                if (tileCache[name] !== null){
+                    tmpName = name.substring(4); // MAP_ or IDS_ removed
+                    tmpSplit = tmpName("/",3);
+                    tileZ = parseInt(tmpSplit[0]);
+                    tileX = parseInt(tmpSplit[1]);
+                    tileY = parseInt(tmpSplit[2]);
+                    if ((tileZ !== ) || () )
+                    // name = mapType_0z/0x/0y
+                    if (1 === randomYesNo()){
+                        try {
+                            delete tileCache[name];
+                            tileCacheLength --;
+                            console.log ("removed " + name + " with delete");
+                        } catch(e) { 
+                            tileCache[name] = undefined; 
+                            tileCacheLength --;
+                            console.log ("removed " + name + " with setting undefined");
+                        }
+                    }
+                }
+            } 
+        }
+        console.log("after cleanup tilecache is "+ tileCacheLength + " long");
+    }
     
     // ------------------------------------------------------------------------
     // tile cache
     // ------------------------------------------------------------------------
     var tileCache = {};
     var tileCacheLength = 0;
+    var tileCacheMaxLength = 100;
     function getTileImage(mapType,z,x,y){
         // check if tile id is valid
         // X goes from 0 to 2^zoom − 1 
@@ -60,11 +97,14 @@
                 if (z === zoomLevel){
                     redrawMapCanvas();
                 }
+                if (tileCacheLength > tileCacheMaxLength){
+                    cleanupTileCache();
+                }
                 //clearTimeout(renderTimeout);
                 //renderTimeout = setTimeout(redrawMapCanvas,300); // 300ms
             }
-            
-            imgElement.src = tileMapBaseUrl + tileName + ".png" ;        
+            // todo switch map type for url
+            imgElement.src = getRandomElement(tileMapBaseUrls) + tileName + ".png" ;        
             return null;
         }
         return imgElement;
@@ -534,9 +574,10 @@
      * Support method to completly erase the map canvas
      */
     function redrawMapCanvas(){
-        // TODO: optimize
-        var context = mapCanvas.getContext("2d");
-        context.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+        var mapContext = mapCanvas.getContext("2d");
+        var idContext = idCanvas.getContext("2d");
+        mapContext.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+        idContext.clearRect(0, 0, idCanvas.width, idCanvas.height);
         var currentPosXonCanvas = Math.floor(mapCanvas.width / 2) - xPosIntoTile - (256 *((tilesNumCols-1)/2));
         var currentPosYonCanvas = Math.floor(mapCanvas.height/ 2) - yPosIntoTile - (256 *((tilesNumRows-1)/2));
         var currentXtile = xTile - ((tilesNumCols-1)/2);  // is always an integer since tilesNumCols is odd
@@ -550,23 +591,29 @@
                 if (imageTile === null){
                     // render the replacement
                     if ((i+j+currentXtile+currentYtile)%2===0){
-                        context.fillStyle = "#DDDDDD";
+                        mapContext.fillStyle = "#DDDDDD";
                     }else{
-                        context.fillStyle = "#EEEEEE";
+                        mapContext.fillStyle = "#EEEEEE";
                     }
-                    context.fillRect(currentPosXonCanvas,currentPosYonCanvas,256,256);
-                    context.font="15px Courier";
-                    context.fillStyle = "#000000";
-                    context.fillText("z: "+zoomLevel+" x: "+(currentXtile+j)+" y: "+(currentYtile+i),currentPosXonCanvas+10,currentPosYonCanvas+128);
-                    
-                    
-                    //context.fillText(""+zoomLevel+" "+(currentXtile+j)+" "+(currentYtile+i),currentPosXonCanvas+10,currentPosYonCanvas+118);
-                    //context.fillText(""+currentPosXonCanvas + " " + currentPosYonCanvas,currentPosXonCanvas+10,currentPosYonCanvas+138);
-                    //context.fillText("("+xPosIntoTile + " " + yPosIntoTile+ ")",currentPosXonCanvas+10,currentPosYonCanvas+158);
+                    mapContext.fillRect(currentPosXonCanvas,currentPosYonCanvas,256,256);
+                    mapContext.font="15px Courier";
+                    mapContext.fillStyle = "#000000";
+                    mapContext.fillText("z: "+zoomLevel+" x: "+(currentXtile+j)+" y: "+(currentYtile+i),currentPosXonCanvas+10,currentPosYonCanvas+128);
                 }else{
-                    // render the tile
-                    context.drawImage(imageTile, currentPosXonCanvas, currentPosYonCanvas,256,256);
+                    // render the tile for Map Canvas
+                    mapContext.drawImage(imageTile, currentPosXonCanvas, currentPosYonCanvas,256,256);
                 }
+                
+                imageTile = getTileImage("IDS",zoomLevel,(currentXtile+j),(currentYtile+i));
+                if (imageTile === null){
+                    // white replacemente for idCanvas
+                    idContext.fillStyle = "#FFFFFF";
+                    idContext.fillRect(currentPosXonCanvas,currentPosYonCanvas,256,256);
+                }else{
+                    // render the tile for idCanvas
+                    idContext.drawImage(imageTile, currentPosXonCanvas, currentPosYonCanvas,256,256);
+                }
+                
                 currentPosXonCanvas += 256; 
             }
             currentPosXonCanvas = Math.floor(mapCanvas.width / 2) - xPosIntoTile - (256 *((tilesNumCols-1)/2));
