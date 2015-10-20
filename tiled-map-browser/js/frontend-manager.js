@@ -37,21 +37,25 @@
     
     function cleanupTileCache(){
         console.log("before cleanup tilecache is "+ tileCacheLength + " long");
-        var tileZ = 0;
-        var tileX = 0;
-        var tileY = 0;
+        var currentTileZ = 0;
+        var currentTileX = 0;
+        var currentTileY = 0;
         var tmpName, tmpSplit;
         for (var name in tileCache) {
             if (tileCache.hasOwnProperty(name)) {
                 if (tileCache[name] !== null){
                     tmpName = name.substring(4); // MAP_ or IDS_ removed
                     tmpSplit = tmpName.split("/",3);
-                    tileZ = parseInt(tmpSplit[0]);
-                    tileX = parseInt(tmpSplit[1]);
-                    tileY = parseInt(tmpSplit[2]);
-                    //if ((tileZ !== ) || () )
-                    // name = mapType_0z/0x/0y
-                    if (1 === randomYesNo()){
+                    currentTileZ = parseInt(tmpSplit[0]);
+                    currentTileX = parseInt(tmpSplit[1]);
+                    currentTileY = parseInt(tmpSplit[2]);
+                    if ((currentTileZ < zoomLevel -1)
+                      ||(currentTileZ > zoomLevel +1)
+                      ||(currentTileX < xTile -((tilesNumCols-1)/2))
+                      ||(currentTileX > xTile +((tilesNumCols-1)/2))
+                      ||(currentTileY < yTile -((tilesNumRows-1)/2))
+                      ||(currentTileY > yTile +((tilesNumRows-1)/2))
+                      ){
                         try {
                             delete tileCache[name];
                             tileCacheLength --;
@@ -73,7 +77,7 @@
     // ------------------------------------------------------------------------
     var tileCache = {};
     var tileCacheLength = 0;
-    var tileCacheMaxLength = 100;
+    var tileCacheMaxLength = 150;
     function getTileImage(mapType,z,x,y){
         // check if tile id is valid
         // X goes from 0 to 2^zoom − 1 
