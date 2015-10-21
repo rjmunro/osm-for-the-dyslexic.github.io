@@ -59,11 +59,11 @@
                         try {
                             delete tileCache[name];
                             tileCacheLength --;
-                            console.log ("removed " + name + " with delete");
+                            //console.log ("removed " + name + " with delete");
                         } catch(e) { 
                             tileCache[name] = undefined; 
                             tileCacheLength --;
-                            console.log ("removed " + name + " with setting undefined");
+                            //console.log ("removed " + name + " with setting undefined");
                         }
                     }
                 }
@@ -83,12 +83,14 @@
         // X goes from 0 to 2^zoom − 1 
         // Y goes from 0 to 2^zoom − 1
         var max = Math.pow(2,z) - 1;
-        if (x < 0) {return null;}
-        if (x > max) {return null;}
+        x = ((x%(max+1)+max+1)%(max+1));
+        //if (x < 0) {return null;}
+        //if (x > max) {return null;}
+        
         if (y < 0) {return null;}
         if (y > max) {return null;}
         var tileName = "" + z + "/" + x + "/" + y;
-    
+        //console.log("x:" + x);
         //console.log("tileCacheLength: " + tileCacheLength);
         // to clean an image just set the object to null
         var imgElement = tileCache[""+mapType+"_"+tileName];
@@ -99,7 +101,7 @@
             imgElement.onload = function(){
                 tileCache[""+mapType+"_"+tileName] = this;
                 if (z === zoomLevel){
-                    redrawMapCanvas();
+                    redrawMapCanvas("onTile");
                 }
                 if (tileCacheLength > tileCacheMaxLength){
                     cleanupTileCache();
@@ -146,7 +148,7 @@
         if (xPosIntoTile < 0){
             xPosIntoTile = 255 + xPosIntoTile; // since it is negative
             xTile -= 1;
-            if (xTile < 0) {xTile = 0;xPosIntoTile=0;}
+            //if (xTile < 0) {xTile = 0;xPosIntoTile=0;}
         }
         if (yPosIntoTile < 0){
             yPosIntoTile = 255 + yPosIntoTile; // since it is negative
@@ -157,14 +159,14 @@
         if (xPosIntoTile > 255){
             xPosIntoTile = xPosIntoTile - 255;
             xTile += 1;
-            if (xTile > maxTile) {xTile = maxTile;xPosIntoTile=255;}
+            //if (xTile > maxTile) {xTile = maxTile;xPosIntoTile=255;}
         }
         if (yPosIntoTile > 255){
             yPosIntoTile = yPosIntoTile - 255;
             yTile += 1;
             if (yTile > maxTile) {yTile = maxTile;yPosIntoTile=255;}
         }
-        redrawMapCanvas();
+        redrawMapCanvas("onPan");
     }
     
     function onZoom(deltaZ){
@@ -173,9 +175,9 @@
             // do nothing
             return;
         }
-    
+        var operation = "";
         if (deltaZ > 0){
-            // zoomin
+            operation = "zoomIn";
             zoomLevel += 1;
             if (xPosIntoTile<128){
                 xTile = 2*xTile;
@@ -192,7 +194,7 @@
                 yPosIntoTile = 2*(yPosIntoTile-128);
             }
         }else{
-            // zoomout
+            operation = "zoomOut";
             zoomLevel -= 1;
             if (xTile%2===0){
                 xTile = xTile / 2;
@@ -209,16 +211,16 @@
                 yPosIntoTile = 128 + Math.round(yPosIntoTile / 2);
             }
         }
-        redrawMapCanvas();
+        redrawMapCanvas(operation);
     }
     
     function onIdentify(canvasPosX,canvasPosY){
-        redrawMapCanvas();
+        redrawMapCanvas("onIdentify");
         printMessageOnMapCanvas("Function: "+"onIdentify(" + canvasPosX + "," + canvasPosY + ")\n" + Date());
     }
     
     function onButton(buttonId){
-        redrawMapCanvas();
+        redrawMapCanvas("onButton");
         printMessageOnMapCanvas("Function onButton(" + buttonId + ")\n" + Date());
     }
     
@@ -365,7 +367,7 @@
         var context2 = idCanvas.getContext("2d");
         context2.canvas.width  = "" + mapWidth + "";
         context2.canvas.height = "" + mapHeight + "";
-        redrawMapCanvas();
+        redrawMapCanvas("arrangeGui");
         buttonsDiv.style.height = "" + buttonHeight + "px";
         buttonsDiv.style.width = "" + buttonWidth + "px";
         buttonsDiv.style.top = "" + buttonTop + "px";
@@ -577,7 +579,8 @@
     /**
      * Support method to completly erase the map canvas
      */
-    function redrawMapCanvas(){
+    function redrawMapCanvas(operation){
+        // operation not used yed
         var mapContext = mapCanvas.getContext("2d");
         var idContext = idCanvas.getContext("2d");
         mapContext.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
@@ -594,15 +597,16 @@
                 imageTile = getTileImage("MAP",zoomLevel,(currentXtile+j),(currentYtile+i));
                 if (imageTile === null){
                     // render the replacement
-                    if ((i+j+currentXtile+currentYtile)%2===0){
+                    //if ((i+j+currentXtile+currentYtile)%2===0){
                         mapContext.fillStyle = "#DDDDDD";
-                    }else{
-                        mapContext.fillStyle = "#EEEEEE";
-                    }
+                    //}else{
+                    //    mapContext.fillStyle = "#EEEEEE";
+                    //}
+                    
                     mapContext.fillRect(currentPosXonCanvas,currentPosYonCanvas,256,256);
-                    mapContext.font="15px Courier";
-                    mapContext.fillStyle = "#000000";
-                    mapContext.fillText("z: "+zoomLevel+" x: "+(currentXtile+j)+" y: "+(currentYtile+i),currentPosXonCanvas+10,currentPosYonCanvas+128);
+                    //mapContext.font="15px Courier";
+                    //mapContext.fillStyle = "#000000";
+                    //mapContext.fillText("z: "+zoomLevel+" x: "+(currentXtile+j)+" y: "+(currentYtile+i),currentPosXonCanvas+10,currentPosYonCanvas+128);
                 }else{
                     // render the tile for Map Canvas
                     mapContext.drawImage(imageTile, currentPosXonCanvas, currentPosYonCanvas,256,256);
@@ -611,7 +615,7 @@
                 imageTile = getTileImage("IDS",zoomLevel,(currentXtile+j),(currentYtile+i));
                 if (imageTile === null){
                     // white replacemente for idCanvas
-                    idContext.fillStyle = "#FFFFFF";
+                    idContext.fillStyle = "#DDDDDD";
                     idContext.fillRect(currentPosXonCanvas,currentPosYonCanvas,256,256);
                 }else{
                     // render the tile for idCanvas
@@ -639,7 +643,7 @@
     function onResize(){
         arrangeGui();
         configureTileMap();
-        redrawMapCanvas();
+        redrawMapCanvas("onResize");
     }
     
     /**
@@ -649,6 +653,7 @@
         var lines = message.split("\n");
         var context=mapCanvas.getContext("2d");
         context.font="15px Courier";
+        context.fillStyle = "#000000";
         for (var i = 0; i < lines.length; i++) {
             context.fillText(lines[i],10,50+i*25);
         } 
