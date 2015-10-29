@@ -3,7 +3,7 @@
 * {margin: 0; padding: 0;}
 a {text-decoration:none;color: #000000;}
 html{/*background: url('../img/bg.jpg') no-repeat center center fixed;-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;*/height:100%;width:100%;}
-body{overflow:scroll-x;margin: 0;padding: 0;border: 0;height:100%;width:100%;font-family:Verdana;color:black;}
+body{overflow:scroll-x;margin: 0;padding: 0;border: 0;height:100%;width:100%;font-family:Verdana;color:black;text-transform:uppercase;}
 strong {font-weight:bold;}
 
 .right{float:right;}
@@ -26,6 +26,7 @@ strong {font-weight:bold;}
 /*.content{padding:0px;background: #19A347;}*/
 .content{padding:0px;}
 .inner-content{padding-left:15px;padding-right:15px;padding-top:15px;min-height:100%;}
+.inner-content > h2 {text-align:center;background: #FF0000;padding-top:5px;padding-bottom:5px;}
 .cell{background: #EEEEEE;padding:10px;margin:15px;}
 a .cell:hover{background: #FF0000;color:#FFFFFF;}
 .cell > h1{background:#333333;padding:10px;text-align:center;margin-bottom:10px;color: #FFFFFF;margin-top:-10px;margin-left:-10px;margin-right:-10px;}
