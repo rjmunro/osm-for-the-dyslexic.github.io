@@ -49,7 +49,6 @@ a .cell:hover{background: #FF0000;color:#FFFFFF;}
 .last{padding-bottom:15px;}
 #mainCarousel{height:300px;}
 .cell #mainCarousel{margin:-10px;}
-
 pre.code-block {
 	counter-reset: linecounter;
     font-family: Consolas,monospace;
@@ -107,6 +106,7 @@ div.made-with{background:#FFFFFF;}
     .flow-header     {height:auto;}
     .flow-footer     {height:auto;}
     .fixed-footer   {height:0px;}
+    .cell img{max-width: 100%;}    
 }
 
 /* mid */
@@ -116,6 +116,7 @@ div.made-with{background:#FFFFFF;}
     .flow-header     {height:auto;}
     .flow-footer     {height:auto;}
     .fixed-footer   {height:0px;}
+    .cell img{max-width: 100%;}    
 }
 
 /* large */
@@ -125,6 +126,7 @@ div.made-with{background:#FFFFFF;}
     .flow-header     {height:auto;}
     .flow-footer     {height:auto;}
     .fixed-footer   {height:0px;}
+    .cell img{max-width: 49%;}
 }
 
 /* xlarge */
@@ -135,6 +137,7 @@ div.made-with{background:#FFFFFF;}
     .flow-footer     {height:auto;}
     .fixed-footer   {height:0px;}
     #mainCarousel{height:500px;}
+    .cell img{max-width: 49%;}
 }
 
 /* xxlarge */
@@ -145,6 +148,7 @@ div.made-with{background:#FFFFFF;}
     .flow-footer     {height:auto;}
     .fixed-footer   {height:0px;}
     #mainCarousel{height:500px;}
+    .cell img{max-width: 49%;}
 }
 
 
