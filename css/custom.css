@@ -42,13 +42,11 @@ a .cell:hover{background: #FF0000;color:#FFFFFF;}
 .cell li{display:list-item;margin-left:1em;}
 .cell p{margin-top:5px;margin-bottom:5px;}
 .cell td{padding:10px;}
-.cell a{border-bottom: 2px solid #19A347;}
+.cell a{text-decoration:underline;}
 .credits-container{background:#333333;color: #FFFFFF;}
-.credits-container > p {text-align:center;padding-top:17px;padding-bottom:17px;}
-.credits-container > p  > a{padding-left:5px;padding-right:5px;color:#FFFFFF;}
+.credits-container > p {text-align:center;padding-top:10px;padding-bottom:10px;padding-left:20px;padding-right:20px;}
+.credits-container > p  > a{padding-left:5px;padding-right:5px;color:#FFFFFF}
 .last{padding-bottom:15px;}
-#mainCarousel{height:300px;}
-.cell #mainCarousel{margin:-10px;}
 pre.code-block {
 	counter-reset: linecounter;
     font-family: Consolas,monospace;
@@ -75,17 +73,34 @@ pre.code-block span:before{
     margin-right: 10px;
 }
 
-@keyframes slidy5           {0% { left: 0%; } 10% { left: 0%; } 30% { left: -100%; } 50% { left: -200%; } 70% { left: -300%; } 90% { left: -400%; } 100% { left: -400%; }/* 100% { left: 0%; }*/}
-@-webkit-keyframes slidy5   {0% { left: 0%; } 10% { left: 0%; } 30% { left: -100%; } 50% { left: -200%; } 70% { left: -300%; } 90% { left: -400%; } 100% { left: -400%; } /* 100% { left: 0%; }*/}
-/*
-@keyframes slidy         {0% { left: 0%; } 20% { left: 0%; } 25% { left: -100%; } 45% { left: -100%; } 50% { left: -200%; } 70% { left: -200%; } 75% { left: -300%; } 95% { left: -300%; } 100% { left: -400%; }}
-@-webkit-keyframes slidy {0% { left: 0%; } 20% { left: 0%; } 25% { left: -100%; } 45% { left: -100%; } 50% { left: -200%; } 70% { left: -200%; } 75% { left: -300%; } 95% { left: -300%; } 100% { left: -400%; }}
-*/
-div.slider5 { overflow: hidden; margin:-10px;}
-div.slider5 figure img { width: 20%; float: left; }
-div.slider5 figure { position: relative;  width: 500%;  margin: 0;  left: 0;  text-align: left;  font-size: 0;  -webkit-animation: 30s slidy5 infinite; animation: 30s slidy5 infinite; }
+.app-main-channels span{height:50px;width:50px;display:inline-block;background-size: 50px 50px;}
+.app-main-channels span:hover{height:50px;width:50px;display:inline-block;background-size: 50px 50px;}
+.more-channels span{height:35px;width:35px;display:inline-block;background-size: 35px 35px;}
+.more-channels span:hover{height:35px;width:35px;display:inline-block;background-size: 35px 35px;}
+.icon-apple{background:url('../img/std/apple.png');background-repeat:no-repeat;}
+.icon-apple:hover{background:url('../img/hover/apple.png');background-repeat:no-repeat;}
+.icon-android{background:url('../img/std/android.png');background-repeat:no-repeat;}
+.icon-android:hover{background:url('../img/hover/android.png');background-repeat:no-repeat;}
 
-/*div.made-with{background: url('../img/gear-27114_640.png') no-repeat right bottom;}*/
+.icon-twitter{background:url('../img/std/twitter.png');background-repeat:no-repeat;}
+.icon-twitter:hover{background:url('../img/hover/twitter.png');background-repeat:no-repeat;}
+.icon-github{background:url('../img/std/github.png');background-repeat:no-repeat;}
+.icon-github:hover{background:url('../img/hover/github.png');background-repeat:no-repeat;}
+
+
+.icon-linkedin{background:url('../img/std/linkedin.png');background-repeat:no-repeat;}
+.icon-linkedin:hover{background:url('../img/hover/linkedin.png');background-repeat:no-repeat;}
+.icon-vimeo{background:url('../img/std/vimeo.png');background-repeat:no-repeat;}
+.icon-vimeo:hover{background:url('../img/hover/vimeo.png');background-repeat:no-repeat;}
+.icon-stackoverflow{background:url('../img/std/stackoverflow.png');background-repeat:no-repeat;}
+.icon-stackoverflow:hover{background:url('../img/hover/stackoverflow.png');background-repeat:no-repeat;}
+.icon-facebook{background:url('../img/std/facebook.png');background-repeat:no-repeat;}
+.icon-facebook:hover{background:url('../img/hover/facebook.png');background-repeat:no-repeat;}
+.icon-email{background:url('../img/std/email.png');background-repeat:no-repeat;}
+.icon-email:hover{background:url('../img/hover/email.png');background-repeat:no-repeat;}
+
+
+
 div.made-with{background:#FFFFFF;}
 
 .color-red{color: red;}
@@ -150,6 +165,3 @@ div.made-with{background:#FFFFFF;}
     #mainCarousel{height:500px;}
     .cell img{max-width: 49%;}
 }
-
-
-
