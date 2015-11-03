@@ -31,4 +31,5 @@ function switchDysMode(){
         setCookie('dysmode', 'off', 365);
     }
     setDysModeAccordingToCookie();
+    arrangeGui();
 }
